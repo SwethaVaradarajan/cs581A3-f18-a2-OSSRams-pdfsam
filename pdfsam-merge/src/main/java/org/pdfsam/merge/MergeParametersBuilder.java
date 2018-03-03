@@ -20,8 +20,10 @@ package org.pdfsam.merge;
 
 import java.util.Set;
 
+import org.pdfsam.model.validators.IntersectionsValidator;
 import org.pdfsam.support.params.AbstractPdfOutputParametersBuilder;
 import org.pdfsam.support.params.SingleOutputTaskParametersBuilder;
+import org.pdfsam.util.Util;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
@@ -37,69 +39,69 @@ import org.sejda.model.toc.ToCPolicy;
  *
  */
 class MergeParametersBuilder extends AbstractPdfOutputParametersBuilder<MergeParameters>
-        implements SingleOutputTaskParametersBuilder<MergeParameters> {
+implements SingleOutputTaskParametersBuilder<MergeParameters> {
+	private Set<PdfMergeInput> inputs = new NullSafeSet<>();
+	private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
+	private boolean blankIfOdd;
+	private boolean footer;
+	private boolean normalize;
+	private AcroFormPolicy formsPolicy = AcroFormPolicy.MERGE;
+	private ToCPolicy tocPolicy = ToCPolicy.NONE;
+	private FileTaskOutput output;
 
-    private Set<PdfMergeInput> inputs = new NullSafeSet<>();
-    private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
-    private boolean blankIfOdd;
-    private boolean footer;
-    private boolean normalize;
-    private AcroFormPolicy formsPolicy = AcroFormPolicy.MERGE;
-    private ToCPolicy tocPolicy = ToCPolicy.NONE;
-    private FileTaskOutput output;
+	void addInput(PdfMergeInput input) {
+		this.inputs.add(input);
+	}
 
-    void addInput(PdfMergeInput input) {
-        this.inputs.add(input);
-    }
+	boolean hasInput() {
+		return !inputs.isEmpty();
+	}
 
-    boolean hasInput() {
-        return !inputs.isEmpty();
-    }
+	void outlinePolicy(OutlinePolicy outlinePolicy) {
+		this.outlinePolicy = outlinePolicy;
+	}
 
-    void outlinePolicy(OutlinePolicy outlinePolicy) {
-        this.outlinePolicy = outlinePolicy;
-    }
+	void blankPageIfOdd(boolean blankIfOdd) {
+		this.blankIfOdd = blankIfOdd;
+	}
 
-    void blankPageIfOdd(boolean blankIfOdd) {
-        this.blankIfOdd = blankIfOdd;
-    }
+	void footer(boolean footer) {
+		this.footer = footer;
+	}
 
-    void footer(boolean footer) {
-        this.footer = footer;
-    }
+	void normalize(boolean normalize) {
+		this.normalize = normalize;
+	}
 
-    void normalize(boolean normalize) {
-        this.normalize = normalize;
-    }
+	void acroFormsPolicy(AcroFormPolicy formsPolicy) {
+		this.formsPolicy = formsPolicy;
+	}
 
-    void acroFormsPolicy(AcroFormPolicy formsPolicy) {
-        this.formsPolicy = formsPolicy;
-    }
+	void tocPolicy(ToCPolicy tocPolicy) {
+		this.tocPolicy = tocPolicy;
+	}
 
-    void tocPolicy(ToCPolicy tocPolicy) {
-        this.tocPolicy = tocPolicy;
-    }
+	@Override
+	public void output(FileTaskOutput output) {
+		this.output = output;
+	}
 
-    @Override
-    public void output(FileTaskOutput output) {
-        this.output = output;
-    }
-
-    @Override
-    public MergeParameters build() {
-        MergeParameters params = new MergeParameters();
-        params.setCompress(isCompress());
-        params.setExistingOutputPolicy(existingOutput());
-        params.setVersion(getVersion());
-        inputs.forEach(params::addInput);
-        params.setOutlinePolicy(outlinePolicy);
-        params.setBlankPageIfOdd(blankIfOdd);
-        params.setAcroFormPolicy(formsPolicy);
-        params.setTableOfContentsPolicy(tocPolicy);
-        params.setOutput(output);
-        params.setFilenameFooter(footer);
-        params.setNormalizePageSizes(normalize);
-        return params;
-    }
+	@Override
+	public MergeParameters build() {
+		MergeParameters params = new MergeParameters();
+		params.setCompress(isCompress());
+		params.setExistingOutputPolicy(existingOutput());
+		params.setVersion(getVersion());
+		inputs.forEach(params::addInput);
+		params.setOutlinePolicy(outlinePolicy);
+		params.setBlankPageIfOdd(blankIfOdd);
+		params.setAcroFormPolicy(formsPolicy);
+		params.setTableOfContentsPolicy(tocPolicy);
+		params.setOutput(output);
+		params.setFilenameFooter(footer);
+		params.setNormalizePageSizes(normalize);
+		Util.setIntersectionsValidatorPdfMergeInput(IntersectionsValidator.class);
+		return params;
+	}
 
 }
