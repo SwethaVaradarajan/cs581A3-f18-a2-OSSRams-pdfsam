@@ -1,0 +1,24 @@
+Difficulties faced in building the original pdfsam forked from torakiki:
+
+The build fails for both the options below:
+1. Build and install the jars in the local repository executing all the unit test:
+mvn clean install -Prelease
+2. Build and install the jars in the local repository skipping tests:
+mvn clean install -Dmaven.test.skip=true -Prelease
+
+Build failure reason:
+Failed to execute goal org.apache.maven.plugins:maven-gpg-plugin:1.6:sign (sign-artifacts)
+
+Fixes:
+1. Running with skipping the release:  -DperformRelease=false
+This passes the build option 2 without the unit tests.
+It fails when running the unit tests. Specifically, 4 tests in PDFsam desktop client application.
+
+2. Running with modified pom file: Commenting the maven-gpg-plugin (lines:57-70)
+This passes the build option 2 without the unit tests.
+It fails when running the unit tests. Specifically, 1 test in pdfsam-split-by-bookmarks modeule.
+Commenting pdfsam-split-by-bookmarks module in main pom file passes al the tests.
+
+I AM NOT SURE IF COMMENTING THESE LINES IN POM FILE HAS A SIDE EFFECT. I AM NOT HAVING SUFFICIENT TIME TO INVESTIGATE ON THIS.
+THESE CHANGES CAN BE SEEN IN COMMIT:527cf489c1b998080d552e4f93a2f03e7dc01241 ON BRANCH v3.3.5_Swetha.
+

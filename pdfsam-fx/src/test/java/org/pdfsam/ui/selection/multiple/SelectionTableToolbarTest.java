@@ -38,7 +38,9 @@ import org.pdfsam.test.HitTestListener;
 import org.pdfsam.ui.commons.ClearModuleEvent;
 import org.pdfsam.ui.commons.RemoveSelectedEvent;
 import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.ClearButton;
+import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.MoveBottomButton;
 import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.MoveDownButton;
+import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.MoveTopButton;
 import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.MoveUpButton;
 import org.pdfsam.ui.selection.multiple.SelectionTableToolbar.RemoveButton;
 import org.pdfsam.ui.selection.multiple.move.MoveSelectedEvent;
@@ -107,6 +109,16 @@ public class SelectionTableToolbarTest extends GuiTest {
         click(victim);
         assertTrue(listener.isHit());
     }
+    
+    @Test
+    public void moveTop() throws Exception {
+        HitTestListener<MoveSelectedEvent> listener = new HitTestListener<>();
+        eventStudio().add(MoveSelectedEvent.class, listener, MODULE);
+        Node victim = find(b -> b instanceof MoveTopButton);
+        enableByFiringSingleSelectionChange(victim);
+        click(victim);
+        assertTrue(listener.isHit());
+    }
 
     @Test
     public void moveDown() throws Exception {
@@ -117,10 +129,26 @@ public class SelectionTableToolbarTest extends GuiTest {
         click(victim);
         assertTrue(listener.isHit());
     }
+    
+    @Test
+    public void moveBottom() throws Exception {
+        HitTestListener<MoveSelectedEvent> listener = new HitTestListener<>();
+        eventStudio().add(MoveSelectedEvent.class, listener, MODULE);
+        Node victim = find(b -> b instanceof MoveBottomButton);
+        enableByFiringSingleSelectionChange(victim);
+        click(victim);
+        assertTrue(listener.isHit());
+    }
 
     private void enableByFiringSelectionChange(Node victim) throws Exception {
         assertTrue(victim.isDisabled());
         FXTestUtils.invokeAndWait(() -> eventStudio().broadcast(select(asList(2, 3)).ofTotalRows(5), MODULE), 1);
+        assertFalse(victim.isDisabled());
+    }
+    
+    private void enableByFiringSingleSelectionChange(Node victim) throws Exception {
+        assertTrue(victim.isDisabled());
+        FXTestUtils.invokeAndWait(() -> eventStudio().broadcast(select(asList(3)).ofTotalRows(5), MODULE), 1);
         assertFalse(victim.isDisabled());
     }
 }
