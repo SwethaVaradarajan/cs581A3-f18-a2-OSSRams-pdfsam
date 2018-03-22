@@ -15,3 +15,10 @@ target/
 *.iml
 .DS_Store
 .idea/
+
+pdfsam-alternate-mix/bin/
+pdfsam-core/bin/
+pdfsam-fx/bin/
+pdfsam-i18n/bin/
+pdfsam-merge/bin/
+

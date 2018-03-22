@@ -21,6 +21,7 @@ package org.pdfsam.support.params;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -34,58 +35,117 @@ import org.sejda.model.pdf.page.PageRange;
 public class ConversionUtilsTest {
 
     @Test(expected = ConversionException.class)
-    public void invalid() {
+    public void invalid1() {
         ConversionUtils.toPageRangeSet("Chuck Norris");
     }
-
+    
     @Test(expected = ConversionException.class)
-    public void invalidRange() {
-        ConversionUtils.toPageRangeSet("1-2-3");
+    public void invalid2() {
+        ConversionUtils.toPageRangeList("Chuck Norris");
     }
 
     @Test(expected = ConversionException.class)
-    public void endLower() {
+    public void invalidRange1() {
+        ConversionUtils.toPageRangeSet("1-2-3");
+    }
+    
+    @Test(expected = ConversionException.class)
+    public void invalidRange2() {
+        ConversionUtils.toPageRangeList("1-2-3");
+    }
+
+    @Test(expected = ConversionException.class)
+    public void endLower1() {
         ConversionUtils.toPageRangeSet("10-5");
+    }
+    
+    @Test(expected = ConversionException.class)
+    public void endLower2() {
+        ConversionUtils.toPageRangeList("10-5");
     }
 
     @Test
-    public void singlePage() {
+    public void singlePage1() {
         Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("5");
+        assertEquals(1, pageSet.size());
+        assertEquals(5, pageSet.stream().findFirst().get().getStart());
+        assertEquals(5, pageSet.stream().findFirst().get().getEnd());
+    }
+    
+    @Test
+    public void singlePage2() {
+        List<PageRange> pageSet = ConversionUtils.toPageRangeList("5");
         assertEquals(1, pageSet.size());
         assertEquals(5, pageSet.stream().findFirst().get().getStart());
         assertEquals(5, pageSet.stream().findFirst().get().getEnd());
     }
 
     @Test
-    public void rangePage() {
+    public void rangePage1() {
         Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("5-10");
+        assertEquals(1, pageSet.size());
+        assertEquals(5, pageSet.stream().findFirst().get().getStart());
+        assertEquals(10, pageSet.stream().findFirst().get().getEnd());
+    }
+    
+    @Test
+    public void rangePage2() {
+    	List<PageRange> pageSet = ConversionUtils.toPageRangeList("5-10");
         assertEquals(1, pageSet.size());
         assertEquals(5, pageSet.stream().findFirst().get().getStart());
         assertEquals(10, pageSet.stream().findFirst().get().getEnd());
     }
 
     @Test
-    public void endPage() {
+    public void endPage1() {
         Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("-10");
+        assertEquals(1, pageSet.size());
+        assertEquals(1, pageSet.stream().findFirst().get().getStart());
+        assertEquals(10, pageSet.stream().findFirst().get().getEnd());
+    }
+    
+    @Test
+    public void endPage2() {
+    	List<PageRange> pageSet = ConversionUtils.toPageRangeList("-10");
         assertEquals(1, pageSet.size());
         assertEquals(1, pageSet.stream().findFirst().get().getStart());
         assertEquals(10, pageSet.stream().findFirst().get().getEnd());
     }
 
     @Test
-    public void startPage() {
+    public void startPage1() {
         Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("10-");
+        assertEquals(1, pageSet.size());
+        assertEquals(10, pageSet.stream().findFirst().get().getStart());
+        assertTrue(pageSet.stream().findFirst().get().isUnbounded());
+    }
+    
+    @Test
+    public void startPage2() {
+    	List<PageRange> pageSet = ConversionUtils.toPageRangeList("10-");
         assertEquals(1, pageSet.size());
         assertEquals(10, pageSet.stream().findFirst().get().getStart());
         assertTrue(pageSet.stream().findFirst().get().isUnbounded());
     }
 
     @Test
-    public void multiple() {
+    public void multiple1() {
         Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("2-4,10-");
         assertEquals(2, pageSet.size());
         assertEquals(2, pageSet.stream().findFirst().get().getStart());
         assertEquals(4, pageSet.stream().findFirst().get().getEnd());
         assertTrue(pageSet.stream().anyMatch(PageRange::isUnbounded));
     }
+    
+    @Test
+    public void multiple2() {
+        List<PageRange> pageSet = ConversionUtils.toPageRangeList("2-4,10-");
+        assertEquals(2, pageSet.size());
+        assertEquals(2, pageSet.stream().findFirst().get().getStart());
+        assertEquals(4, pageSet.stream().findFirst().get().getEnd());
+        assertTrue(pageSet.stream().anyMatch(PageRange::isUnbounded));
+    }
+    
+    
+    
 }

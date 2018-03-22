@@ -29,7 +29,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.sejda.eventstudio.StaticStudio.eventStudio;
-
+import static org.mockito.Mockito.times;
 import java.io.File;
 import java.util.function.Consumer;
 
@@ -103,8 +103,8 @@ public class MergeSelectionPaneTest {
         victim.apply(builder, onError);
         verify(onError, never()).accept(anyString());
         ArgumentCaptor<PdfMergeInput> input = ArgumentCaptor.forClass(PdfMergeInput.class);
-        verify(builder).addInput(input.capture());
-        assertEquals(2, input.getValue().getPageSelection().size());
+        verify(builder,times(2)).addInput(input.capture());
+        assertEquals(1, input.getValue().getPageSelection().size());
     }
 
     @Test

@@ -20,7 +20,10 @@ package org.pdfsam.merge;
 
 import static org.apache.commons.lang3.StringUtils.trim;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.pdfsam.i18n.DefaultI18nContext;
@@ -32,8 +35,10 @@ import org.pdfsam.ui.selection.multiple.LongColumn;
 import org.pdfsam.ui.selection.multiple.MultipleSelectionPane;
 import org.pdfsam.ui.selection.multiple.PageRangesColumn;
 import org.pdfsam.ui.selection.multiple.SelectionTableColumn;
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.pdf.page.PageRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,28 +49,42 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class MergeSelectionPane extends MultipleSelectionPane
-        implements TaskParametersBuildStep<MergeParametersBuilder> {
-    private static final Logger LOG = LoggerFactory.getLogger(MergeSelectionPane.class);
+implements TaskParametersBuildStep<MergeParametersBuilder> {
+	private static final Logger LOG = LoggerFactory.getLogger(MergeSelectionPane.class);
 
-    public MergeSelectionPane(String ownerModule) {
-        super(ownerModule, true, true,
-                new SelectionTableColumn<?>[] { new LoadingColumn(ownerModule), FileColumn.NAME, LongColumn.SIZE,
-                        IntColumn.PAGES, LongColumn.LAST_MODIFIED, new PageRangesColumn(DefaultI18nContext.getInstance()
-                                .i18n("Double click to set pages you want to merge (ex: 2 or 5-23 or 2,5-7,12-)")) });
-    }
+	public MergeSelectionPane(String ownerModule) {
+		super(ownerModule, true, true,
+				new SelectionTableColumn<?>[] { new LoadingColumn(ownerModule), FileColumn.NAME, LongColumn.SIZE,
+			IntColumn.PAGES, LongColumn.LAST_MODIFIED, new PageRangesColumn(DefaultI18nContext.getInstance()
+					.i18n("Double click to set pages you want to merge (ex: 2 or 5-23 or 2,5-7,12-)")) });
+	}
 
-    @Override
-    public void apply(MergeParametersBuilder builder, Consumer<String> onError) {
-        try {
-            table().getItems().stream().filter(s -> !Objects.equals("0", trim(s.pageSelection.get())))
-                    .map(i -> new PdfMergeInput(i.descriptor().toPdfFileSource(), i.toPageRangeSet()))
-                    .forEach(builder::addInput);
-            if (!builder.hasInput()) {
-                onError.accept(DefaultI18nContext.getInstance().i18n("No PDF document has been selected"));
-            }
-        } catch (ConversionException e) {
-            LOG.error(e.getMessage());
-            onError.accept(e.getMessage());
-        }
-    }
+	@Override
+	public void apply(MergeParametersBuilder builder, Consumer<String> onError) {
+		try {
+			table().getItems().stream().filter(s -> !Objects.equals("0", trim(s.pageSelection.get())))
+			.map(i -> {
+				List<PdfMergeInput> inputList  = new ArrayList<PdfMergeInput>();
+				if(i.toPageRangeList().size() == 0){
+					inputList.add(new PdfMergeInput(i.descriptor().toPdfFileSource(), i.toPageRangeSet()));
+				}else{
+					for(PageRange p :	i.toPageRangeList()){
+						Set<PageRange> set = new NullSafeSet<>();
+						set.add(p);
+						inputList.add(new PdfMergeInput(i.descriptor().toPdfFileSource(), set));
+					}
+				}
+				return inputList;
+			}).forEach(i -> {
+				for(PdfMergeInput in : i )
+					builder.addInput(in);
+			});
+			if (!builder.hasInput()) {
+				onError.accept(DefaultI18nContext.getInstance().i18n("No PDF document has been selected"));
+			}
+		} catch (ConversionException e) {
+			LOG.error(e.getMessage());
+			onError.accept(e.getMessage());
+		}
+	}
 }

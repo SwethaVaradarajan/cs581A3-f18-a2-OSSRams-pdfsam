@@ -20,10 +20,8 @@ package org.pdfsam.merge;
 
 import java.util.Set;
 
-import org.pdfsam.model.validators.IntersectionsValidator;
 import org.pdfsam.support.params.AbstractPdfOutputParametersBuilder;
 import org.pdfsam.support.params.SingleOutputTaskParametersBuilder;
-import org.pdfsam.util.Util;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
@@ -100,7 +98,6 @@ implements SingleOutputTaskParametersBuilder<MergeParameters> {
 		params.setOutput(output);
 		params.setFilenameFooter(footer);
 		params.setNormalizePageSizes(normalize);
-		Util.setIntersectionsValidatorPdfMergeInput(IntersectionsValidator.class);
 		return params;
 	}
 

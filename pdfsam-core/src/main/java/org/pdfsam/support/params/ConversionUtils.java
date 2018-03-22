@@ -21,7 +21,9 @@ package org.pdfsam.support.params;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sejda.conversion.AdapterUtils.splitAndTrim;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.pdfsam.i18n.DefaultI18nContext;
@@ -57,6 +59,23 @@ public final class ConversionUtils {
             return pageRangeSet;
         }
         return Collections.emptySet();
+    }
+    
+    public static List<PageRange> toPageRangeList(String selection) throws ConversionException {
+        if (isNotBlank(selection)) {
+            List<PageRange> pageRangeSet = new ArrayList<>();
+            String[] tokens = splitAndTrim(selection, ",");
+            for (String current : tokens) {
+                PageRange range = toPageRange(current);
+                if (range.getEnd() < range.getStart()) {
+                    throw new ConversionException(
+                            DefaultI18nContext.getInstance().i18n("Invalid range: {0}.", range.toString()));
+                }
+                pageRangeSet.add(range);
+            }
+            return pageRangeSet;
+        }
+        return Collections.emptyList();
     }
 
     private static PageRange toPageRange(String value) throws ConversionException {

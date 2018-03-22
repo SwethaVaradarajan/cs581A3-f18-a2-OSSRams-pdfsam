@@ -42,10 +42,17 @@ public class SelectionTableRowDataTest {
     public ClearEventStudioRule eventStudioRule = new ClearEventStudioRule();
 
     @Test
-    public void empty() throws ConversionException {
+    public void emptySetTest() throws ConversionException {
         PdfDocumentDescriptor descriptor = mock(PdfDocumentDescriptor.class);
         SelectionTableRowData victim = new SelectionTableRowData(descriptor);
         assertTrue(victim.toPageRangeSet().isEmpty());
+    }
+    
+    @Test
+    public void emptyListTest() throws ConversionException {
+        PdfDocumentDescriptor descriptor = mock(PdfDocumentDescriptor.class);
+        SelectionTableRowData victim = new SelectionTableRowData(descriptor);
+        assertTrue(victim.toPageRangeList().isEmpty());
     }
 
     @Test
