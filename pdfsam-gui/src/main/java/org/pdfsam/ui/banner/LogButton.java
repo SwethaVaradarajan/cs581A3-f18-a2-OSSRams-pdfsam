@@ -22,7 +22,6 @@ import static org.sejda.eventstudio.StaticStudio.eventStudio;
 
 import org.pdfsam.i18n.DefaultI18nContext;
 import org.pdfsam.ui.commons.Animations;
-import org.pdfsam.ui.commons.HideStageRequest;
 import org.pdfsam.ui.commons.ShowStageRequest;
 import org.pdfsam.ui.log.ErrorLoggedEvent;
 import org.pdfsam.ui.log.LogAreaVisiblityChangedEvent;
@@ -42,11 +41,13 @@ class LogButton extends BannerButton {
 
     static final String HAS_ERRORS_CSS_CLASS = "log-has-errors";
     private Timeline anim;
-    private Object action = ShowStageRequest.INSTANCE;
 
     LogButton() {
         super(MaterialDesignIcon.COMMENT_ALERT_OUTLINE);
-        setOnAction(e -> eventStudio().broadcast(action, "LogStage"));
+        setOnAction(e -> {
+            hasUnseenErrors(false);
+            eventStudio().broadcast(new ShowStageRequest(), "LogStage");
+        });
         setTooltip(new Tooltip(DefaultI18nContext.getInstance().i18n("Application messages")));
         anim = Animations.shake(this);
         eventStudio().addAnnotatedListeners(this);
@@ -60,17 +61,6 @@ class LogButton extends BannerButton {
     @EventListener
     public void onViewedLogArea(LogAreaVisiblityChangedEvent event) {
         hasUnseenErrors(false);
-    }
-
-    @EventListener(station = "LogStage")
-    public void onHideStage(HideStageRequest event) {
-        action = ShowStageRequest.INSTANCE;
-    }
-
-    @EventListener(station = "LogStage")
-    public void onShowStage(ShowStageRequest event) {
-        hasUnseenErrors(false);
-        action = HideStageRequest.INSTANCE;
     }
 
     void hasUnseenErrors(boolean value) {

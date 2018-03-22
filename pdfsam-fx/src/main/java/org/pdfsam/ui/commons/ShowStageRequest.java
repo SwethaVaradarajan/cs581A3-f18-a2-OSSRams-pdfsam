@@ -25,9 +25,5 @@ package org.pdfsam.ui.commons;
  * 
  */
 public class ShowStageRequest {
-    public static final ShowStageRequest INSTANCE = new ShowStageRequest();
-
-    private ShowStageRequest() {
-        // hide
-    }
+    // nothing
 }
