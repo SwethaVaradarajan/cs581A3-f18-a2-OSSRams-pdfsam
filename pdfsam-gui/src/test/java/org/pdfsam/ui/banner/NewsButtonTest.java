@@ -21,9 +21,7 @@ package org.pdfsam.ui.banner;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.sejda.eventstudio.StaticStudio.eventStudio;
 
@@ -31,7 +29,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.loadui.testfx.GuiTest;
 import org.loadui.testfx.categories.TestFX;
-import org.pdfsam.news.HideNewsPanelRequest;
 import org.pdfsam.news.ShowNewsPanelRequest;
 import org.sejda.eventstudio.Listener;
 
@@ -50,14 +47,9 @@ public class NewsButtonTest extends GuiTest {
     @Test
     public void onClick() {
         Listener<ShowNewsPanelRequest> listener = mock(Listener.class);
-        Listener<HideNewsPanelRequest> hideListener = mock(Listener.class);
         eventStudio().add(ShowNewsPanelRequest.class, listener);
-        eventStudio().add(HideNewsPanelRequest.class, hideListener);
         click(".button");
-        verify(listener).onEvent(eq(ShowNewsPanelRequest.INSTANCE));
-        verify(hideListener, never()).onEvent(any());
-        click(".button");
-        verify(hideListener).onEvent(eq(HideNewsPanelRequest.INSTANCE));
+        verify(listener).onEvent(any());
     }
 
     @Test

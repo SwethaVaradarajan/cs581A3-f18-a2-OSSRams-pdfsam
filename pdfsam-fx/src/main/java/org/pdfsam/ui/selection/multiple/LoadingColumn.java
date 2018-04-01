@@ -123,7 +123,7 @@ public class LoadingColumn implements SelectionTableColumn<PdfDescriptorLoadingS
                                     new ShowPasswordFieldPopupRequest(getPdfDocumentDescriptor(), this),
                                     getOwnerModule());
                         } else if (getItem() == WITH_ERRORS) {
-                            eventStudio().broadcast(ShowStageRequest.INSTANCE, "LogStage");
+                            eventStudio().broadcast(new ShowStageRequest(), "LogStage");
                         }
                     });
             updater = new LoadingStatusIndicatorUpdater(this);
