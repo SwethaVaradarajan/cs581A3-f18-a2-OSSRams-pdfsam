@@ -82,13 +82,7 @@ public class RememberingLatestFileChooserWrapper extends BaseRememberingLatestCh
      */
     public File showDialog(Window ownerWindow, OpenType type) {
         File selected = null;
-        switch (type) {
-        case SAVE:
-            selected = wrapped.showSaveDialog(ownerWindow);
-            break;
-        default:
-            selected = wrapped.showOpenDialog(ownerWindow);
-        }
+        selected = getTypeObject(type).showDialog(selected, ownerWindow, this);
         notifyNewLatestDirectory(selected);
         return selected;
     }
@@ -113,4 +107,16 @@ public class RememberingLatestFileChooserWrapper extends BaseRememberingLatestCh
         OPEN,
         SAVE;
     }
+
+	private Type getTypeObject(OpenType type) {
+		switch (type) {
+		case SAVE:
+			return new Save();
+		}
+		return null;
+	}
+
+	public FileChooser getWrapped() {
+		return wrapped;
+	}
 }
