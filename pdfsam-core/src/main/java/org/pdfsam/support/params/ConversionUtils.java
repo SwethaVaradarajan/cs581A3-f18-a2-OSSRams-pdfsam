@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sejda.conversion.AdapterUtils.splitAndTrim;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -44,18 +45,23 @@ public final class ConversionUtils {
     /**
      * @return the {@link PageRange} set for the given string, an empty set otherwise.
      */
+    
+    private static Collection<PageRange> addPageRanges(String selection, Collection<PageRange> collection){
+    	String[] tokens = splitAndTrim(selection, ",");
+        for (String current : tokens) {
+            PageRange range = toPageRange(current);
+            if (range.getEnd() < range.getStart()) {
+                throw new ConversionException(
+                        DefaultI18nContext.getInstance().i18n("Invalid range: {0}.", range.toString()));
+            }
+            collection.add(range);
+        }
+    	return collection;
+    }
     public static Set<PageRange> toPageRangeSet(String selection) throws ConversionException {
         if (isNotBlank(selection)) {
             Set<PageRange> pageRangeSet = new NullSafeSet<>();
-            String[] tokens = splitAndTrim(selection, ",");
-            for (String current : tokens) {
-                PageRange range = toPageRange(current);
-                if (range.getEnd() < range.getStart()) {
-                    throw new ConversionException(
-                            DefaultI18nContext.getInstance().i18n("Invalid range: {0}.", range.toString()));
-                }
-                pageRangeSet.add(range);
-            }
+            pageRangeSet = (Set<PageRange>) addPageRanges(selection, pageRangeSet);
             return pageRangeSet;
         }
         return Collections.emptySet();
@@ -63,17 +69,9 @@ public final class ConversionUtils {
     
     public static List<PageRange> toPageRangeList(String selection) throws ConversionException {
         if (isNotBlank(selection)) {
-            List<PageRange> pageRangeSet = new ArrayList<>();
-            String[] tokens = splitAndTrim(selection, ",");
-            for (String current : tokens) {
-                PageRange range = toPageRange(current);
-                if (range.getEnd() < range.getStart()) {
-                    throw new ConversionException(
-                            DefaultI18nContext.getInstance().i18n("Invalid range: {0}.", range.toString()));
-                }
-                pageRangeSet.add(range);
-            }
-            return pageRangeSet;
+            List<PageRange> pageRangeList = new ArrayList<>();
+            pageRangeList = (List<PageRange>) addPageRanges(selection, pageRangeList);
+            return pageRangeList;
         }
         return Collections.emptyList();
     }
