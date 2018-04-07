@@ -34,7 +34,7 @@ public final class ModuleDescriptorBuilder {
     private ModuleInputOutputType[] inputTypes;
     private String name;
     private String description;
-    private int priority = ModulePriority.DEFAULT.getPriority();
+    private ModuleDescriptorBuilderPriority moduleDescriptorBuilderPriority = new ModuleDescriptorBuilderPriority();
     private String supportURL;
 
     private ModuleDescriptorBuilder() {
@@ -61,14 +61,12 @@ public final class ModuleDescriptorBuilder {
         return this;
     }
 
-    public ModuleDescriptorBuilder priority(int priority) {
-        this.priority = priority;
-        return this;
+   public ModuleDescriptorBuilder priority(int priority) {
+        return moduleDescriptorBuilderPriority.priority(priority,this);
     }
 
     public ModuleDescriptorBuilder priority(ModulePriority priority) {
-        this.priority = priority.getPriority();
-        return this;
+        return moduleDescriptorBuilderPriority.priority(priority,this);
     }
 
     public ModuleDescriptorBuilder supportURL(String supportURL) {
@@ -89,6 +87,6 @@ public final class ModuleDescriptorBuilder {
         requireNotNull(category, "Module category cannot be null");
         require(isNotBlank(name), "Module name cannot be blank");
         require(isNotBlank(description), "Module description cannot be blank");
-        return new ModuleDescriptor(category, name, description, priority, supportURL, inputTypes);
+        return new ModuleDescriptor(category, name, description, moduleDescriptorBuilderPriority.getPriority(), supportURL, inputTypes);
     }
 }
