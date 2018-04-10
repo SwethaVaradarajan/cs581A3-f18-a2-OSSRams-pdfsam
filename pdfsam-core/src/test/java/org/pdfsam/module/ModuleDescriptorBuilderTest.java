@@ -21,6 +21,8 @@ package org.pdfsam.module;
 import static org.junit.Assert.assertEquals;
 import static org.pdfsam.module.ModuleDescriptorBuilder.builder;
 
+import java.util.NoSuchElementException;
+
 import org.junit.Test;
 
 /**
@@ -59,11 +61,12 @@ public class ModuleDescriptorBuilderTest {
                 .supportURL("url").build();
     }
     
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void buildNullUrl() {
-        builder().category(ModuleCategory.MERGE).description("desx").name("name").priority(ModulePriority.DEFAULT)
+    	ModuleDescriptor victim =  builder().category(ModuleCategory.MERGE).description("desc").name("name").priority(ModulePriority.DEFAULT)
                 .supportURL(null).build();
-    }
+    	victim.getSupportURL().get();
+        }
 
     @Test
     public void build() {
