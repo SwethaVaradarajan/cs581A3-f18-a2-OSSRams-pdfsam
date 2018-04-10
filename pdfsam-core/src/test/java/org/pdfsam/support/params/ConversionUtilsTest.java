@@ -146,6 +146,22 @@ public class ConversionUtilsTest {
         assertTrue(pageSet.stream().anyMatch(PageRange::isUnbounded));
     }
     
+    @Test
+    public void multiple3() {
+        List<PageRange> pageSet = ConversionUtils.toPageRangeList("2-4,2,2-4");
+        assertEquals(3, pageSet.size());
+        assertEquals(2, pageSet.stream().findFirst().get().getStart());
+        assertEquals(4, pageSet.stream().findFirst().get().getEnd());
+    }
+    
+    @Test
+    public void multiple4() {
+        Set<PageRange> pageSet = ConversionUtils.toPageRangeSet("2-4,2-4");
+        assertEquals(1, pageSet.size());
+        assertEquals(2, pageSet.stream().findFirst().get().getStart());
+        assertEquals(4, pageSet.stream().findFirst().get().getEnd());
+    }
+    
     
     
 }
