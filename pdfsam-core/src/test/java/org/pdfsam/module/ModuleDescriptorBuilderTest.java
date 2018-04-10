@@ -58,6 +58,12 @@ public class ModuleDescriptorBuilderTest {
         builder().category(ModuleCategory.MERGE).description("").name("name").priority(ModulePriority.DEFAULT)
                 .supportURL("url").build();
     }
+    
+    @Test
+    public void buildNullUrl() {
+        builder().category(ModuleCategory.MERGE).description("desx").name("name").priority(ModulePriority.DEFAULT)
+                .supportURL(null).build();
+    }
 
     @Test
     public void build() {
