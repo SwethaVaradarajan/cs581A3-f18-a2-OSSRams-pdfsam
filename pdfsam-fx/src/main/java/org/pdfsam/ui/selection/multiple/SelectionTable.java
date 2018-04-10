@@ -470,12 +470,16 @@ public class SelectionTable extends TableView<SelectionTableRowData> implements 
 	private void passwordPopup(ShowPasswordFieldPopupRequest request, Scene scene) {
 		Window owner = scene.getWindow();
 		if (owner != null && owner.isShowing()) {
-			Point2D nodeCoord = request.getRequestingNode().localToScene(request.getRequestingNode().getWidth() / 2,
-					request.getRequestingNode().getHeight() / 1.5);
-			double anchorX = Math.round(owner.getX() + scene.getX() + nodeCoord.getX() + 2);
-			double anchorY = Math.round(owner.getY() + scene.getY() + nodeCoord.getY() + 2);
-			passwordPopup.showFor(this, request.getPdfDescriptor(), anchorX, anchorY);
+			passwordPopupDisplay(request, scene, owner);
 		}
+	}
+
+	private void passwordPopupDisplay(ShowPasswordFieldPopupRequest request, Scene scene, Window owner) {
+		Point2D nodeCoord = request.getRequestingNode().localToScene(request.getRequestingNode().getWidth() / 2,
+				request.getRequestingNode().getHeight() / 1.5);
+		double anchorX = Math.round(owner.getX() + scene.getX() + nodeCoord.getX() + 2);
+		double anchorY = Math.round(owner.getY() + scene.getY() + nodeCoord.getY() + 2);
+		passwordPopup.showFor(this, request.getPdfDescriptor(), anchorX, anchorY);
 	}
 
     @Override
